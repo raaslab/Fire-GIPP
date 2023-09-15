@@ -1,0 +1,1 @@
+{"num_sensors": 50, "sensor_distance": 5, "border_size": 2, "wind_direction": 315, "wind_angle": 60, "wind_edge_difference": 35, "radius": 1, "smoke_spread_radius": 7, "search_radius": 8, "probability_distance_effect": 1.1, "probability_angle_effect": 0, "forest_fraction": 1, "p": 0.0, "f": 0.0001, "nx": 100, "ny": 100}
