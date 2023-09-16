@@ -1,6 +1,6 @@
 # Fire-GIPP
 
-Run AirSim ROS Wrapper in 1st terminal
+Run fire simulation:
 ```
 python3 run_sim.py
 ```
