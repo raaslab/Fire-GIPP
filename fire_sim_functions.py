@@ -60,8 +60,9 @@ def iterate(X, velocity, ny, nx, border_size, neighbourhood, wind_direction, win
                             # only catch fire with a reduced probability:
                             #if abs(dx) == abs(dy) and np.random.random() < 0.573:
                             #    continue
-                            #if ((wind_angle - abs(angle_difference)) < wind_edge_difference) and np.random.random() < 0.573:
-                            #    continue
+                            wind_edge_difference = 35
+                            if ((wind_angle - abs(angle_difference)) < wind_edge_difference) and np.random.random() < 0.573:
+                                continue
                             if X[iy+dy, ix+dx] == FIRE:
                                 X1[iy, ix] = FIRE
                                 break
@@ -144,7 +145,7 @@ def find_search_area(sensor_locations, sensor_smoke_detected, velocity, ny, nx, 
                     if distance < 1:
                         distance = 1
 
-                    X1[y + dy, x + dx] = 1 / ((1 + (probability_angle_effect * abs(angle_difference) / wind_angle)) * probability_distance_effect * distance)
+                    X1[y + dy, x + dx] += 1 / ((1 + (probability_angle_effect * abs(angle_difference) / wind_angle)) * probability_distance_effect * distance)
 
     return X1
 
@@ -245,7 +246,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                 if not validated:
                     validation_distance = distance_traveled
                 localization_distance = distance_traveled
-                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
             elif world[item[0], item[1]] == SMOKE or world[item[0], item[1]] == EMPTY:
                 if not validated:
                     print('Fire validated! Total distance: %.2f' % distance_traveled)
@@ -273,7 +274,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
             if not validated:
                 validation_distance = distance_traveled
             localization_distance = distance_traveled
-            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
         elif world[item[0], item[1]] == SMOKE or world[item[0], item[1]] == EMPTY:
             if not validated:
                 print('Fire validated! Total distance: %.2f' % distance_traveled)
@@ -290,7 +291,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                     if not validated:
                         validation_distance = distance_traveled
                     localization_distance = distance_traveled
-                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
 
         '''
         for dy, dx in probability_check_neighborhood:
@@ -341,7 +342,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                 print('Fire validated and located! Total distance: %.2f' % distance_traveled)
                 validation_distance = distance_traveled
                 localization_distance = distance_traveled
-                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
             elif world[current_position[0], current_position[1]] == SMOKE:
                 print('Fire validated! Total distance: %.2f' % distance_traveled)
                 search_area[current_position[0], current_position[1]] = 0
@@ -365,7 +366,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                         print('False positive detected')
                         validation_distance = distance_traveled
                         localization_distance = distance_traveled
-                        return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                        return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
                 search_area[current_position[0], current_position[1]] = 0
                 search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
                                                                current_position, ny, nx, border_size, wind_direction,
@@ -389,7 +390,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                         distance = np.linalg.norm(p - q)
                         search_area_distances[i, j] = distance
             if np.sum(search_area_distances) == 0:
-                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
 
             closest_search_area_point = np.asarray(
                 np.where(search_area_distances == np.min(search_area_distances[np.nonzero(search_area_distances)])))
@@ -411,7 +412,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                     print('Fire validated and located! Total distance: %.2f' % distance_traveled)
                     validation_distance = distance_traveled
                     localization_distance = distance_traveled
-                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
                 elif world[current_position[0], current_position[1]] == SMOKE:
                     print('Fire validated! Total distance: %.2f' % distance_traveled)
                     search_area[current_position[0], current_position[1]] = 0
@@ -436,7 +437,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                             print('False positive detected')
                             validation_distance = distance_traveled
                             localization_distance = distance_traveled
-                            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
                     search_area[current_position[0], current_position[1]] = 0
                     search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
                                                                    current_position, ny, nx, border_size,
@@ -453,7 +454,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
             print('Fire validated and located! Total distance: %.2f' % distance_traveled)
             validation_distance = distance_traveled
             localization_distance = distance_traveled
-            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
         elif world[current_position[0], current_position[1]] == SMOKE:
             print('Fire validated! Total distance: %.2f' % distance_traveled)
             search_area[current_position[0], current_position[1]] = 0
@@ -522,7 +523,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                     print('False positive detected')
                     validation_distance = distance_traveled
                     localization_distance = distance_traveled
-                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
             search_area[current_position[0], current_position[1]] = 0
             search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
                                                            current_position, ny, nx, border_size, wind_direction,
@@ -576,7 +577,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
             if world[current_position[0], current_position[1]] == FIRE:
                 print('Fire located! Total distance: %.2f' % distance_traveled)
                 localization_distance = distance_traveled
-                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
             elif world[current_position[0], current_position[1]] == SMOKE:
                 search_area[current_position[0], current_position[1]] = 0
                 search_area[current_position[0], current_position[1]] = 0
@@ -597,7 +598,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                             sensor_locations[sensor_index][1]:
                         print('False positive detected')
                         localization_distance = distance_traveled
-                        return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                        return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
                 search_area[current_position[0], current_position[1]] = 0
                 search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
                                                                current_position, ny, nx, border_size,
@@ -621,7 +622,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                         distance = np.linalg.norm(p - q)
                         search_area_distances[i, j] = distance
             if np.sum(search_area_distances) == 0:
-                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
 
             closest_search_area_point = np.asarray(
                 np.where(search_area_distances == np.min(search_area_distances[np.nonzero(search_area_distances)])))
@@ -642,7 +643,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                 if world[current_position[0], current_position[1]] == FIRE:
                     print('Fire located! Total distance: %.2f' % distance_traveled)
                     localization_distance = distance_traveled
-                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
                 elif world[current_position[0], current_position[1]] == SMOKE:
                     search_area[current_position[0], current_position[1]] = 0
                     search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
@@ -710,7 +711,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                                 sensor_locations[sensor_index][1]:
                             print('False positive detected')
                             localization_distance = distance_traveled
-                            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
                     search_area[current_position[0], current_position[1]] = 0
                     search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
                                                                    current_position, ny, nx, border_size,
@@ -749,7 +750,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
         if world[current_position[0], current_position[1]] == FIRE:
             print('Fire located! Total distance: %.2f' % distance_traveled)
             localization_distance = distance_traveled
-            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+            return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
         elif world[current_position[0], current_position[1]] == SMOKE:
             search_area[current_position[0], current_position[1]] = 0
             search_area[current_position[0], current_position[1]] = 0
@@ -816,7 +817,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                         sensor_locations[sensor_index][1]:
                     print('False positive detected')
                     localization_distance = distance_traveled
-                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+                    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
             search_area[current_position[0], current_position[1]] = 0
             search_area = update_search_area_probabilities(search_area, probability_check_neighborhood,
                                                            current_position, ny, nx, border_size,
@@ -846,7 +847,7 @@ def valfire(search_area, world, smokeless_world, uav_initial_location, ny, nx, b
                     search_area[current_position[0] + dy, current_position[1] + dx] = 0
             '''
 
-    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time, search_area
+    return path_tracker, distance_traveled, validation_distance, localization_distance, astar_distance, spread_time
 
 
 def baseline(world, smokeless_world, gtsp_tour, target_cells, uav_initial_location, ny, nx, border_size, wind_direction, wind_angle, sensor_smoke_detected, sensor_locations, fire_spread_rate, maze):

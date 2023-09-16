@@ -29,7 +29,7 @@ smoke_spread_radius = 7
 search_radius = smoke_spread_radius + 1
 
 probability_distance_effect = 1.1
-probability_angle_effect = 0
+probability_angle_effect = 1
 
 forest_fraction = 1
 # Probability of new tree growth per empty cell, and of lightning strike.
